@@ -3,10 +3,11 @@ using System.Collections;
 
 public class CloudManager : MonoBehaviour
 {
+	/* CLOUD VARUABLES */
 	[SerializeField] private int mNumberOfClouds;
 	[SerializeField] private Cloud mPrefabCloud;
-
 	private Cloud[]	mCloudList;
+	
 	[SerializeField] private Sprite[]		mCloudImages;
 	[SerializeField] private Color			mAppearColor;
 	[SerializeField] private Color			mStartColor;
@@ -16,6 +17,8 @@ public class CloudManager : MonoBehaviour
 	[SerializeField] private Vector2		mStartPos;
 	[SerializeField] private CountDownTimer mSpawnTimer;
 	[SerializeField] private float			mSpeed;
+
+	private bool mRaining;
 
 	private static CloudManager mInstance;
 	public static CloudManager Instance
@@ -47,6 +50,7 @@ public class CloudManager : MonoBehaviour
 			mCloudList[i].transform.parent = transform;
 		}
 
+		mRaining = false;
 		mSpawnTimer.IsStarted = true;
 		mSpawnTimer.CounterTimerHook += SpawnCloud;
 	}
@@ -64,9 +68,33 @@ public class CloudManager : MonoBehaviour
 			{
 				mCloudList[i].Active	= true;
 				mCloudList[i].Position	= mStartPos;
+				mCloudList[i].Raining(mRaining);
 				return;
 			}
 		}
+	}
+	public bool Raining	
+	{	
+		set 
+		{
+			mRaining = value;
+			foreach(Cloud c in mCloudList)
+			{	
+				if(c.Active)	c.Raining(mRaining);	
+			}
+		}	
+	}
+
+	public bool Thunder
+	{	
+		set 
+		{
+			mRaining = value;
+			foreach(Cloud c in mCloudList)
+			{	
+				if(c.Active)	VisualEffectManager.Instance.PlayThunder(c.transform.position);	
+			}
+		}	
 	}
 
 	public delegate void ColorChangeDelegate(float _timePassed, float _maxTime);

@@ -3,10 +3,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Card : MonoBehaviour 
+public class Card : AnimationSprite 
 {
 	[SerializeField] private SpriteRenderer mCardImage;
-	[SerializeField] private Animator		mCardAnimator;
 	[SerializeField] private CountDownTimer	mCounter;
 
 	private bool mIsPoweredUp	= false;
@@ -16,8 +15,7 @@ public class Card : MonoBehaviour
 
 	private void Start()
 	{
-		mCardAnimator	= gameObject.GetComponent<Animator>();
-		mCounter		= gameObject.GetComponent<CountDownTimer>();
+		mCounter = gameObject.GetComponent<CountDownTimer>();
 	}
 
 	public float CurrentTime	{	get { return mCounter.CurrentTime;	}	}
@@ -37,23 +35,23 @@ public class Card : MonoBehaviour
 	}
 	public bool IsFlipped
 	{
-		get {	return mCardAnimator.GetBool("Flipped");		}
+		get {	return mAnimator.GetBool("Flipped");		}
 		set 
 		{	
 			mCounter.IsStarted = value;
 			if(value)	mCounter.CounterTimerHook += CounterTimerEnded;
 			else 		mCounter.CounterTimerHook -= CounterTimerEnded;
-			mCardAnimator.SetBool("Flipped", value);
+			mAnimator.SetBool("Flipped", value);
 		}
 	}
-	public bool Active
+	public override bool Active
 	{
-		get { return gameObject.activeSelf;	}
+		get { return base.Active;	}
 		set 
 		{ 
+			base.Active = value;
 			if(value)	CardManager.Instance.OpenCardHook 	+= OpenCard;
 			else 		CardManager.Instance.OpenCardHook	-= OpenCard;
-			gameObject.SetActive(value);
 		}
 	}
 

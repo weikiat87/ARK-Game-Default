@@ -1,14 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Cloud : MonoBehaviour 
+public class Cloud : SpriteBase 
 {
-	private Color mAppearColor;
-	private Color mStartColor;
-	private Color mEndColor;
-	private float mYMinimum;
-	private float mSpeed;
-	private float mTime;
+	private Color	mAppearColor;
+	private Color	mStartColor;
+	private Color	mEndColor;
+	private float	mYMinimum;
+	private float	mSpeed;
+	private bool	mRaining;
 
 	private float mRotationAngle;
 	private float mRotationSpeed;
@@ -16,15 +16,22 @@ public class Cloud : MonoBehaviour
 	private enum mState	{ none, appear, moving };
 	private mState mCurrentState;
 	[SerializeField] private SpriteRenderer mCloudSprite;
+	[SerializeField] private CountDownTimer mTimer;
+
+	private void Start()
+	{
+		mTimer = gameObject.GetComponent<CountDownTimer>();
+		mTimer.IsStarted = false;
+	}
 
 	private void Update()
 	{
-		if(mCurrentState == mState.appear && mTime < 1.0f)
+		if(mCurrentState == mState.appear)
 		{
-			mTime += Time.deltaTime;
-			Color.Lerp(mAppearColor,mStartColor,mTime);
-			if(mTime > 1.0f)	mCurrentState = mState.moving;
+			mCurrentState = mState.moving;
+			//timer for raindrop
 		}
+
 		mCloudSprite.transform.rotation = Quaternion.Euler(0,0, Mathf.Sin(Time.realtimeSinceStartup*mRotationSpeed) * mRotationAngle);
 		transform.Translate(new Vector3(mSpeed*Time.deltaTime,0,0));
 	}
@@ -41,41 +48,42 @@ public class Cloud : MonoBehaviour
 		mRotationSpeed		= Random.Range(1,3);
 	}
 
-	public bool Active
+	public override bool Active
 	{
-		get {	return gameObject.activeSelf;		}
+		get {	return base.Active;		}
 		set	
 		{	
-			gameObject.SetActive(value);
-			mTime = 0.0f;
+			base.Active = value;
 			if(value)	
 			{
 				mCurrentState = mState.appear;
-				CloudManager.Instance.ColorChangeHook += HandleColorChangeHook;
+				CloudManager.Instance.ColorChangeHook	+= HandleColorChangeHook;
+				mTimer.CounterTimerHook					+= HandleTimerHook;
 			}
 			else 		
 			{
 				mCurrentState = mState.none;
-				CloudManager.Instance.ColorChangeHook -= HandleColorChangeHook;
+				CloudManager.Instance.ColorChangeHook	-= HandleColorChangeHook;
+				mTimer.CounterTimerHook					-= HandleTimerHook;
 			}
 		}
+	}
+
+	public void Raining(bool _value)
+	{
+		mTimer.IsStarted = mRaining = _value;
 	}
 
 	private void HandleColorChangeHook(float _timePassed, float _maxTime)
 	{		
 		mCloudSprite.color = Color.Lerp(mStartColor,mEndColor,((_maxTime-_timePassed)/_maxTime));	
 	}
-	public float	Speed
-	{	
-		set 
-		{
-			mSpeed = Random.Range(0.1f,value);
-		}	
+	private void HandleTimerHook()
+	{
+		// call the rain to come
+		if(mRaining)	VisualEffectManager.Instance.PlayRaindrop(transform.position);
 	}
-	public Vector2	Position	
-	{	set 
-		{ 
-			transform.position	= new Vector2(value.x,Random.Range(mYMinimum,value.y));	
-		}	
-	}
+
+	public float	Speed		{	set {	mSpeed = Random.Range(0.1f,value);		}		}
+	public Vector2	Position	{	set { 	transform.position	= new Vector2(value.x,Random.Range(mYMinimum,value.y));	}	}
 }
