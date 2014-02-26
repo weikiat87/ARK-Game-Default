@@ -14,7 +14,7 @@ public class Global : MonoBehaviour
 	{
 		if(mInstance == null) mInstance = this;
 		if(mInstance.gameObject != this.gameObject)	Destroy(this.gameObject);
-		Screen.SetResolution(Global.ScreenWidth,Global.ScreenHeight,false);
+		Screen.SetResolution(ScreenWidth,ScreenHeight,false);
 
 		transition = GetComponentInChildren<Transition>();
 		transition.FadeIn();
@@ -34,8 +34,8 @@ public class Global : MonoBehaviour
 
 	private void OnGUI()
 	{
-		if(GUI.Button(new Rect(0,0,100,40), "Main")) StartCoroutine(LoadLevel(LevelType.main));
-		if(GUI.Button(new Rect(0,40,100,40), "Level")) StartCoroutine(LoadLevel(LevelType.level));
+		if(GUI.Button(new Rect(0,0,100,40), "Main"))	StartCoroutine(LoadLevel(LevelType.main));
+		if(GUI.Button(new Rect(0,40,100,40), "Level"))	StartCoroutine(LoadLevel(LevelType.level));
 
 	}
 }

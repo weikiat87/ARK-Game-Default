@@ -121,8 +121,8 @@ public class CardManager : MonoBehaviour
 					c.IsFlipped = false;
 					RemoveCardOnGrid(c);
 				}
-				mOpenedCards.Clear();	// Empty Opened Cards
 				AnimationManager.Instance.PlayAnimation();
+				mOpenedCards.Clear();	// Empty Opened Cards
 				CheckComplete();
 			}
 		}
