@@ -28,15 +28,10 @@ public class RayCastingManager : MonoBehaviour
 	private void Update()
 	{
 		mRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-		if(RayCastingHook != null) 		
-		{	
-			RayCastingHook(mRay);	
-		}
+		if(RayCastingHook != null)	
+			RayCastingHook(mRay);
 	}
-	public void UnHookDelegates()
-	{
-		RayCastingHook = null;
-	}
+	public void UnHookDelegates()	{	RayCastingHook = null;	}
 
 	public delegate void RayCastingDelegate(Ray _ray);
 	public event RayCastingDelegate RayCastingHook;

@@ -10,34 +10,34 @@ public class CardGrid
 	private int mNumberOfCard;					// Total Number of Card on field
 	private int mCurrentRow;					// Current Row
 	private int mCurrentCol;					// Current Col
-	private float mDistance;					// Distance per grid
-	public void Init(int _row, int _col,float _distance)
+	private float mGridSpacing;					// Distance per grid
+	private Vector2 mGridPos;					// Transform Position of Card Manager
+
+	public void Init(int _row, int _col,float _spacing,Vector3 _pos)
 	{
+		mGridPos = _pos.XY();
 		// Create Initial Grid
 		m2DGrid = new GridNode[_col,_row];
 		for(int y=0;y<_row;y++)
 		{
 			for(int x=0;x<_col;x++)
 			{
-				GridNode temp = new GridNode();
-				temp.x = x;
-				temp.y = y;
-				m2DGrid[x,y] = temp;
+				m2DGrid[x,y] = new GridNode(x,y);
 			}
 		}
 
 		mCurrentCol		= 2;
 		mCurrentRow		= 2;
 		mNumberOfCard	= 0;
-		mDistance 		=_distance;
+		mGridSpacing 	= _spacing;
 
 		UpdateGridPosition();
 	}
 	public void UpdateGridPosition()
 	{
 		// Do something to Update Grid Pos
-		float startX = -(mDistance/2 * (mCurrentCol-1));
-		float startY = (mDistance/2 * (mCurrentRow-1));
+		float startX = -(mGridSpacing/2 * (mCurrentCol-1))	+ mGridPos.x;
+		float startY = (mGridSpacing/2 * (mCurrentRow-1))	+ mGridPos.y;
 
 		for(int y=0;y<mCurrentRow;y++)
 		{
@@ -45,10 +45,10 @@ public class CardGrid
 			for(int x=0;x<mCurrentCol;x++)
 			{
 				m2DGrid[x,y].mPosition = new Vector3(deltaX,startY,0);
-				deltaX+= mDistance;
+				deltaX+= mGridSpacing;
 				Debug.Log(m2DGrid[x,y].mPosition);
 			}
-			startY-= mDistance;
+			startY-= mGridSpacing;
 		}
 
 	}

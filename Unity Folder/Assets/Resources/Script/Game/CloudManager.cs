@@ -18,6 +18,8 @@ public class CloudManager : MonoBehaviour
 	[SerializeField] private CountDownTimer mSpawnTimer;
 	[SerializeField] private float			mSpeed;
 
+	[SerializeField] private Lightning		mPrefabLightning;
+
 	private bool mRaining;
 
 	private static CloudManager mInstance;
@@ -73,28 +75,28 @@ public class CloudManager : MonoBehaviour
 			}
 		}
 	}
-	public bool Raining	
+	public void PlayRain()
 	{	
-		set 
-		{
-			mRaining = value;
-			foreach(Cloud c in mCloudList)
-			{	
-				if(c.Active)	c.Raining(mRaining);	
-			}
-		}	
+		mRaining = true;
+		mSpawnTimer.MaxTime = 2.0f;
+		foreach(Cloud c in mCloudList)
+		{	
+			if(c.Active)	c.Raining(mRaining);	
+		}
 	}
 
-	public bool Thunder
+	public void PlayLightning()
 	{	
-		set 
-		{
-			mRaining = value;
-			foreach(Cloud c in mCloudList)
-			{	
-				if(c.Active)	VisualEffectManager.Instance.PlayThunder(c.transform.position);	
+		foreach(Cloud c in mCloudList)
+		{	
+			c.RainTimer.MaxTime = c.RainTimer.MaxTime/2;
+			if(c.Active)	
+			{
+				Lightning temp = Instantiate(mPrefabLightning) as Lightning;
+				temp.transform.position = c.transform.position;
+				temp.transform.Translate(new Vector3(0,0.1f,0));
 			}
-		}	
+		}
 	}
 
 	public delegate void ColorChangeDelegate(float _timePassed, float _maxTime);

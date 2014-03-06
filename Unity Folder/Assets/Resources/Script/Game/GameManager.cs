@@ -28,21 +28,41 @@ public class GameManager : MonoBehaviour
 		//Change Global Settings
 		Global.CurrentLevel = LevelType.level;
 		mGameTimer = GetComponentInChildren<CountDownTimer>();
+		mGameTimer.CounterTimerHook += HandleCounterTimerHook;
 		mGameTimer.IsStarted = true;
+
 		mRaining = mThunder = false;
 	}
+
 	private void Update()
 	{
 		if( (mGameTimer.CurrentTime/mGameTimer.MaxTime) < mRainWarningTimer && !mRaining )	
 		{
-			CloudManager.Instance.Raining = mRaining = true;
+			mRaining = true;
+			CloudManager.Instance.PlayRain();
 			SoundEffectManager.Instance.PlayEffect("raining");
 		}
 		if( (mGameTimer.CurrentTime/mGameTimer.MaxTime) < mThunderWarningTimer && !mThunder )	
 		{
-			CloudManager.Instance.Thunder = mThunder = true;
+			mThunder = true;
+			CloudManager.Instance.PlayLightning();
 			SoundEffectManager.Instance.PlayEffect("thunder");	
 		}
+	}
+
+	
+	private void HandleCounterTimerHook()
+	{
+		Debug.Log("Game Ended");
+		
+		if(AnimationManager.Instance.ArkClose())
+		{
+			mGameTimer.CounterTimerHook -= HandleCounterTimerHook;
+			//Temp solution
+			StartCoroutine( Global.Instance.LoadLevel(LevelType.main) );
+		}
+		RayCastingManager.Instance.UnHookDelegates();
+		CardManager.Instance.gameObject.SetActive(false);
 	}
 
 	public float GameTime		{	get { return mGameTimer.CurrentTime;	}	}

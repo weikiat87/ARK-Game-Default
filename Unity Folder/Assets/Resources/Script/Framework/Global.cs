@@ -9,17 +9,30 @@ public class Global : MonoBehaviour
 	public static LevelType CurrentLevel;
 	public Transition transition;
 	private static Global mInstance;
+	public static Global Instance
+	{
+		get 
+		{
+			if(mInstance == null) mInstance = GameObject.Find("Global").GetComponent<Global>();
+			return mInstance;
+		}
+	}
+
 
 	private void Awake()
 	{
 		if(mInstance == null) mInstance = this;
 		if(mInstance.gameObject != this.gameObject)	Destroy(this.gameObject);
-		Screen.SetResolution(ScreenWidth,ScreenHeight,false);
-
-		transition = GetComponentInChildren<Transition>();
-		transition.FadeIn();
 
 		DontDestroyOnLoad(gameObject);
+	}
+
+	private void Start()
+	{
+		Screen.SetResolution(ScreenWidth,ScreenHeight,false);
+		
+		transition = GetComponentInChildren<Transition>();
+		transition.FadeIn();
 	}
 
 	public IEnumerator LoadLevel(LevelType _type)
@@ -36,6 +49,6 @@ public class Global : MonoBehaviour
 	{
 		if(GUI.Button(new Rect(0,0,100,40), "Main"))	StartCoroutine(LoadLevel(LevelType.main));
 		if(GUI.Button(new Rect(0,40,100,40), "Level"))	StartCoroutine(LoadLevel(LevelType.level));
-
+		GUI.Label(new Rect(10,80,100,100),"Use For Testing and Debugging, Don't worry it will be gone :)");
 	}
 }

@@ -18,4 +18,13 @@ public class GridNode
 		mCard = null;
 		mPosition = Vector3.zero;
 	}
+
+	public GridNode(int _x,int _y)
+	{
+		
+		x = _x;
+		y = _y;
+		mCard = null;
+		mPosition = Vector3.zero;
+	}
 }

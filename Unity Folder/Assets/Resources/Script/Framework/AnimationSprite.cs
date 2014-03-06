@@ -1,11 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
-[RequireComponent (typeof(Animator))]
+[RequireComponent (typeof(Animation))]
 public abstract class AnimationSprite : SpriteBase
 {
-	protected Animator mAnimator;
-	protected void Awake()	{	mAnimator = gameObject.GetComponent<Animator>();	}
 
 	public override bool Active 
 	{

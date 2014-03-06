@@ -29,7 +29,6 @@ public class Cloud : SpriteBase
 		if(mCurrentState == mState.appear)
 		{
 			mCurrentState = mState.moving;
-			//timer for raindrop
 		}
 
 		mCloudSprite.transform.rotation = Quaternion.Euler(0,0, Mathf.Sin(Time.realtimeSinceStartup*mRotationSpeed) * mRotationAngle);
@@ -74,6 +73,12 @@ public class Cloud : SpriteBase
 		mTimer.IsStarted = mRaining = _value;
 	}
 
+	public CountDownTimer RainTimer
+	{
+		get { return mTimer; }
+		set { mTimer = value; }
+	}
+
 	private void HandleColorChangeHook(float _timePassed, float _maxTime)
 	{		
 		mCloudSprite.color = Color.Lerp(mStartColor,mEndColor,((_maxTime-_timePassed)/_maxTime));	
@@ -81,7 +86,7 @@ public class Cloud : SpriteBase
 	private void HandleTimerHook()
 	{
 		// call the rain to come
-		if(mRaining)	VisualEffectManager.Instance.PlayRaindrop(transform.position);
+		if(mRaining)	RaindropManager.Instance.PlayRaindrop(transform.position);
 	}
 
 	public float	Speed		{	set {	mSpeed = Random.Range(0.1f,value);		}		}

@@ -29,7 +29,12 @@ public class CountDownTimer : Timer
 		}
 	}
 	public float CurrentTime	{ get { return mCurrentTime;	} }
-	public float MaxTime		{ get { return mMaxTime;		} }
+	public float MaxTime		
+	{
+		get { return mMaxTime;	} 
+		set { mMaxTime = value;	}
+	}
+
 	public delegate void CounterTimerEndedDelegate();
 	public event CounterTimerEndedDelegate CounterTimerHook;
 	

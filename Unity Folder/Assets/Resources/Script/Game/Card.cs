@@ -8,13 +8,12 @@ public class Card : AnimationSprite
 	[SerializeField] private SpriteRenderer mCardImage;
 	[SerializeField] private CountDownTimer	mCounter;
 
-	private bool mIsPoweredUp	= false;
-	private RaycastHit mRayCastHit;
-
+	private RaycastHit	mRayCastHit;
+	private bool		mFlipped;
 	[SerializeField] private int mCurrentType;
 
-	private void Start()
-	{
+	private void Start()		
+	{	
 		mCounter = gameObject.GetComponent<CountDownTimer>();
 	}
 
@@ -35,13 +34,22 @@ public class Card : AnimationSprite
 	}
 	public bool IsFlipped
 	{
-		get {	return mAnimator.GetBool("Flipped");		}
+		get {	return mFlipped;		}
 		set 
 		{	
-			mCounter.IsStarted = value;
-			if(value)	mCounter.CounterTimerHook += CounterTimerEnded;
-			else 		mCounter.CounterTimerHook -= CounterTimerEnded;
-			mAnimator.SetBool("Flipped", value);
+			mCounter.IsStarted = mFlipped = value;
+			if(value)
+			{
+				animation.Play("Opening");
+				mCounter.CounterTimerHook += CounterTimerEnded;
+			}
+			else
+			{
+
+				animation.PlayQueued("Closing",QueueMode.PlayNow);
+				animation.PlayQueued("Idle",QueueMode.CompleteOthers);
+				mCounter.CounterTimerHook -= CounterTimerEnded;
+			}
 		}
 	}
 	public override bool Active
@@ -55,15 +63,19 @@ public class Card : AnimationSprite
 		}
 	}
 
+	private void CompareCards()
+	{
+		CardManager.Instance.CompareCards();
+	}
+		
 	// Timer Function
 	private void CounterTimerEnded()	{	CardManager.Instance.RemoveCard(this);	}
 	// Card Manager Function
 	private void OpenCard(Ray _ray)
 	{
-	
 		if(Physics.Raycast(_ray,out mRayCastHit,Mathf.Infinity))
 		{
-			if( Input.GetMouseButtonUp(0))
+			if(Input.GetMouseButtonUp(0))
 			{
 				if(mRayCastHit.collider.gameObject == mCardImage.gameObject)
 					CardManager.Instance.AddCard(this);	

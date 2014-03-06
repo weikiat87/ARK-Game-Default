@@ -5,7 +5,7 @@ public class RaindropManager : MonoBehaviour
 {
 	[SerializeField] private Raindrop mPrefRaindrop;
 	[SerializeField] private int mRaindropSize;
-	[Range (1f, 5f)][SerializeField] private float mRaindropSpeed;
+	[Range (3f, 5f)][SerializeField] private float mRaindropSpeed;
 	private Raindrop[] mList;
 	private static RaindropManager mInstance;
 	public static RaindropManager Instance
@@ -36,13 +36,12 @@ public class RaindropManager : MonoBehaviour
 		}
 	}
 
-	public void Raindrop(Vector3 _pos)
+	public void PlayRaindrop(Vector3 _pos)
 	{
 		foreach(Raindrop r in mList)
 		{
 			if(!r.Active)	
 			{
-				Debug.Log("raindrop dropped");
 				r.Active = true;
 				r.transform.position = _pos;
 				r.Speed = Random.Range(1,mRaindropSpeed);

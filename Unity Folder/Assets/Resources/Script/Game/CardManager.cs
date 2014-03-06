@@ -6,11 +6,13 @@ public class CardManager : MonoBehaviour
 {	
 	[SerializeField] private Card	mPrefabCard;				// Prefab of Card
 	[SerializeField] private int	mTotalPairs;				// Max Pairs
-	[SerializeField] private float	mDistance;					// Distance between Cards in Grid
+	[SerializeField] private float	mGridSpacing;				// Distance between Cards in Grid
 	[SerializeField] private int	mMaxRows;					// Max Row
 	[SerializeField] private int	mMaxCols;					// Max Col
 	[SerializeField] private Sprite[]	mSpriteImageList;		// Images of Sprite
 	[SerializeField] private Card[] 	mCardHolderList;		// Temp Holder
+
+	[SerializeField] private int	mPointsPerCard;
 
 	private List<Card> mOpenedCards = new List<Card>();	// Cards that are opened
 	private CardGrid mGrid;								// The Grid
@@ -45,7 +47,7 @@ public class CardManager : MonoBehaviour
 		}
 
 		mGrid = new CardGrid();
-		mGrid.Init(mMaxRows,mMaxCols,mDistance);
+		mGrid.Init(mMaxRows,mMaxCols,mGridSpacing,transform.position);
 
 	}
 	private void Start()
@@ -62,34 +64,33 @@ public class CardManager : MonoBehaviour
 			{
 				mOpenedCards.Add(_card);
 				_card.IsFlipped	= true;
-				
-				Debug.Log(_card.IsFlipped);
 			}
 		}
 		else
 		{
-			mOpenedCards[0].IsFlipped = false;
-			mOpenedCards.RemoveAt(0);
-			_card.IsFlipped = true;
-			mOpenedCards.Add(_card);
+			if(!mOpenedCards.Contains(_card)) 
+			{	
+				mOpenedCards[0].IsFlipped = false;
+				mOpenedCards.RemoveAt(0);
+				_card.IsFlipped = true;
+				mOpenedCards.Add(_card);
+			}
 		}
 
-		CompareCards();
 	}
 	public void RemoveCard(Card _card)
 	{
-		if(mOpenedCards.Count < 2)
+		if(mOpenedCards.Count <= 2)
 		{
 			if(mOpenedCards.Contains(_card)) 
 			{
 				_card.IsFlipped		= false;
-				
-				Debug.Log(_card.IsFlipped);
 				mOpenedCards.Remove(_card);
 			}
 		}
 	}
 
+	public int 	CardPoints()					{	return mPointsPerCard;				}
 	public Card CardOnGrid(int _x, int _y)		{	return mGrid.GetCard(_x,_y);		}
 	public void RemoveCardOnGrid(Card _card)	{	mGrid.RemoveCard(_card);			}
 	public Sprite GetSpriteImage(int _index)	{	return mSpriteImageList[_index];	}
@@ -110,7 +111,7 @@ public class CardManager : MonoBehaviour
 			mGrid.InsertCard(mCardHolderList[i]);
 		}
 	}
-	private void CompareCards()
+	public void CompareCards()
 	{
 		if(mOpenedCards.Count == 2)
 		{
@@ -121,7 +122,8 @@ public class CardManager : MonoBehaviour
 					c.IsFlipped = false;
 					RemoveCardOnGrid(c);
 				}
-				AnimationManager.Instance.PlayAnimation();
+				AnimationManager.Instance.PlayAnimation(mOpenedCards[0].CardType);
+				PointsManager.Instance.AddPointsWithPopup(mPointsPerCard,mOpenedCards[0].WorldPosition,mOpenedCards[1].WorldPosition);
 				mOpenedCards.Clear();	// Empty Opened Cards
 				CheckComplete();
 			}
