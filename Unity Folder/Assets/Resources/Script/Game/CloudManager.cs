@@ -7,7 +7,8 @@ public class CloudManager : MonoBehaviour
 	[SerializeField] private int mNumberOfClouds;
 	[SerializeField] private Cloud mPrefabCloud;
 	private Cloud[]	mCloudList;
-	
+
+	[SerializeField] private LevelType		mType;
 	[SerializeField] private Sprite[]		mCloudImages;
 	[SerializeField] private Color			mAppearColor;
 	[SerializeField] private Color			mStartColor;
@@ -59,7 +60,7 @@ public class CloudManager : MonoBehaviour
 
 	private void Update()
 	{
-		if(ColorChangeHook != null) ColorChangeHook(GameManager.Instance.GameTime,GameManager.Instance.GameMaxTime);
+		if(ColorChangeHook != null && mType == LevelType.level) ColorChangeHook(GameManager.Instance.GameTime,GameManager.Instance.GameMaxTime);
 	}
 
 	private void SpawnCloud()
