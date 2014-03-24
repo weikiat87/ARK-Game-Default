@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LoadAudioOffButton : Buttons
+public class AudioButton : Buttons
 {
-	[SerializeField] private Vector3 mPosition;
+	[SerializeField] private bool mAudio;
 	// Use this for initialization
 	private void Start ()
 	{
@@ -27,7 +27,7 @@ public class LoadAudioOffButton : Buttons
 			}
 		}
 	}
-	
+		
 	
 	protected override void Release(Ray _ray)
 	{
@@ -39,8 +39,9 @@ public class LoadAudioOffButton : Buttons
 				{
 					
 					//Do Something when release
-					GameObject.Find("Play").audio.Stop();
-
+					Debug.Log(gameObject.name + " release");
+					Global.Audio = mAudio;
+					PlayerPrefs.SetInt("Audio", mAudio?1:0);
 				}
 			}
 			
@@ -52,3 +53,4 @@ public class LoadAudioOffButton : Buttons
 		
 	}
 }
+

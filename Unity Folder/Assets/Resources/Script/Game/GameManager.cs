@@ -30,8 +30,12 @@ public class GameManager : MonoBehaviour
 		mGameTimer = GetComponentInChildren<CountDownTimer>();
 		mGameTimer.CounterTimerHook += HandleCounterTimerHook;
 		mGameTimer.IsStarted = true;
-
 		mRaining = mThunder = false;
+	}
+
+	private void Start()
+	{
+		GetComponent<AudioSource>().enabled = Global.Audio;
 	}
 
 	private void Update()
@@ -55,16 +59,24 @@ public class GameManager : MonoBehaviour
 	{
 		Debug.Log("Game Ended");
 		
+		RayCastingManager.Instance.UnHookDelegates();
+		CardManager.Instance.gameObject.SetActive(false);
+
 		if(AnimationManager.Instance.ArkClose())
 		{
 			mGameTimer.CounterTimerHook -= HandleCounterTimerHook;
 			//Temp solution
-			StartCoroutine( Global.Instance.LoadLevel(LevelType.main) );
+			StartCoroutine(Scoring());
 		}
-		RayCastingManager.Instance.UnHookDelegates();
-		CardManager.Instance.gameObject.SetActive(false);
 	}
+	private IEnumerator Scoring()
+	{
+		Global.Instance.transition.FadeOut();
+		yield return new WaitForSeconds(Global.Instance.transition.mFadeDuration);
+		Global.Instance.transition.FadeIn();
 
+
+	}
 	public float GameTime		{	get { return mGameTimer.CurrentTime;	}	}
 	public float GameMaxTime	{	get { return mGameTimer.MaxTime;		}	}
 }

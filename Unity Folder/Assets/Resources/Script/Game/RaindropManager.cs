@@ -33,6 +33,11 @@ public class RaindropManager : MonoBehaviour
 			mList[i] = Instantiate(mPrefRaindrop) as Raindrop;
 			mList[i].transform.parent = this.transform;
 			mList[i].Active = false;
+			switch(Random.Range(0,2))
+			{
+				case 0: mList[i].SpriteBase.sortingLayerName = "Middleground";	break;
+				case 1:	mList[i].SpriteBase.sortingLayerName = "CardFG";		break;
+			}
 		}
 	}
 

@@ -6,6 +6,7 @@ public class Global : MonoBehaviour
 {
 	public static int ScreenWidth	= 480;
 	public static int ScreenHeight	= 800;
+	public static bool Audio;
 	public static LevelType CurrentLevel;
 	public Transition transition;
 	private static Global mInstance;
@@ -33,6 +34,7 @@ public class Global : MonoBehaviour
 		
 		transition = GetComponentInChildren<Transition>();
 		transition.FadeIn();
+		if(PlayerPrefs.HasKey("Audio"))	Audio = PlayerPrefs.GetInt("Audio")==1?true:false;	
 	}
 
 	public IEnumerator LoadLevel(LevelType _type)
@@ -45,10 +47,4 @@ public class Global : MonoBehaviour
 		else if(_type == LevelType.level)	Application.LoadLevel("Game");
 	}
 
-	private void OnGUI()
-	{
-		if(GUI.Button(new Rect(0,0,100,40), "Main"))	StartCoroutine(LoadLevel(LevelType.main));
-		if(GUI.Button(new Rect(0,40,100,40), "Level"))	StartCoroutine(LoadLevel(LevelType.level));
-		GUI.Label(new Rect(10,80,100,100),"Use For Testing and Debugging, Don't worry it will be gone :)");
-	}
 }

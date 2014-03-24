@@ -4,8 +4,9 @@ using System.Collections.Generic;
 
 public class AnimationManager : MonoBehaviour 
 {
-	[SerializeField] private Animal[] mPrefabAnimal;	// Animals Animations
+	[SerializeField] private GameObject[] mPrefabAnimal;	// Animals Animations
 	[SerializeField] private GameObject mArk;
+	[SerializeField] private Waves mWaves;
 
 	private List<Animal> mList = new List<Animal>();
 	private static AnimationManager mInstance;
@@ -29,17 +30,19 @@ public class AnimationManager : MonoBehaviour
 	public void PlayAnimation(int _cardType)
 	{
 
-		//TODO: Add proper animation calls
-		Animal temp = Instantiate(mPrefabAnimal[_cardType]) as Animal;
+		GameObject temp = Instantiate(mPrefabAnimal[_cardType]) as GameObject;
+		temp.AddComponent<Animal>();
 		temp.transform.parent = this.transform;
-		temp.SetEndPos();
-		mList.Add(temp);
-		temp = Instantiate(mPrefabAnimal[_cardType]) as Animal;
+		temp.GetComponent<Animal>().SetEndPos();
+		temp.animation.Play();
+		mList.Add(temp.GetComponent<Animal>());
+		temp = Instantiate(mPrefabAnimal[_cardType]) as GameObject;
+		temp.AddComponent<Animal>();
 		temp.transform.Translate(-1.0f,0,-5);
-		temp.SetEndPos();
+		temp.GetComponent<Animal>().SetEndPos();
 		temp.transform.parent = this.transform;
-		mList.Add(temp);
-		
+		mList.Add(temp.GetComponent<Animal>());
+		temp.animation.Play();
 	}
 
 	public void Remove(Animal _obj)	
@@ -51,7 +54,9 @@ public class AnimationManager : MonoBehaviour
 	public bool ArkClose()
 	{
 		if(mList.Count != 0) return false;
-		mArk.animation.Play("ArkCloseAnimation");
+		mArk.animation.PlayQueued("ArkCloseAnimation");
+		mArk.animation.PlayQueued("ArkFloating",QueueMode.CompleteOthers);
+		mWaves.Active = mWaves.Move = true;
 		return true;
 	}
 }

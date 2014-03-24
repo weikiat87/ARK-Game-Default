@@ -50,6 +50,10 @@ public class PointsManager : MonoBehaviour
 
 		
 		mPopupPoints[0].Active = mPopupPoints[1].Active = true;
+	}
 
+	public int Points
+	{
+		get { return mCurrentPoints; }
 	}
 }
