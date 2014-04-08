@@ -133,6 +133,7 @@ public class CardManager : MonoBehaviour
 	{
 		if(mGrid.CardsOnGrid() == 0)
 		{
+			GameManager.Instance.mLevelsCompleted +=1;
 			if(mCurrentPairs < mTotalPairs) mCurrentPairs++;
 			switch(mCurrentPairs)
 			{
@@ -150,7 +151,6 @@ public class CardManager : MonoBehaviour
 				mGrid.IncreaseCol();
 				break;
 			}
-			Debug.Log(mCurrentPairs);
 			mGrid.UpdateGridPosition();
 			SetPlayingCards();
 		}

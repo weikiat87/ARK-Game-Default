@@ -41,6 +41,7 @@ public class LoadOptionsButton : Buttons
 					//Do Something when release
 					Debug.Log(gameObject.name + " release");
 					CameraLerp.Instance.TransitCamera(mPosition);
+					SoundEffectManager.Instance.PlayEffect("select");
 				}
 			}
 			

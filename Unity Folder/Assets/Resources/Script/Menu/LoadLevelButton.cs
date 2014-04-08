@@ -39,7 +39,9 @@ public class LoadLevelButton : Buttons
 					
 					//Do Something when release
 					Debug.Log(gameObject.name + " release");
+					SoundEffectManager.Instance.PlayEffect("select");
 					StartCoroutine(Global.Instance.LoadLevel(mLevelToLoad));
+
 				}
 			}
 			

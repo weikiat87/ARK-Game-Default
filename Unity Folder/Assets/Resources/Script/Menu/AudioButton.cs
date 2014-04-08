@@ -3,7 +3,9 @@ using System.Collections;
 
 public class AudioButton : Buttons
 {
-	[SerializeField] private bool mAudio;
+	private enum mAudioType { Audio, SFX };
+	[SerializeField] private mAudioType mType;
+	[SerializeField] private bool mOnOffFlag;
 	// Use this for initialization
 	private void Start ()
 	{
@@ -40,8 +42,17 @@ public class AudioButton : Buttons
 					
 					//Do Something when release
 					Debug.Log(gameObject.name + " release");
-					Global.Audio = mAudio;
-					PlayerPrefs.SetInt("Audio", mAudio?1:0);
+					if(mType == mAudioType.Audio)		
+					{
+						Global.SetAudio(mOnOffFlag);
+						SoundEffectManager.Instance.SetAudio(Global.Audio);
+					}
+					else if(mType == mAudioType.SFX)
+					{
+						Global.SetSFX(mOnOffFlag);
+						SoundEffectManager.Instance.SetSFX(Global.SFX);
+					}
+					SoundEffectManager.Instance.PlayEffect("select");
 				}
 			}
 			

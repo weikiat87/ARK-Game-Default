@@ -6,9 +6,11 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private CountDownTimer mGameTimer;
 	[Range (0.0f,1.0f)][SerializeField] private float mRainWarningTimer;
 	[Range (0.0f,1.0f)][SerializeField] private float mThunderWarningTimer;
-
+	
 	private bool mRaining;
 	private bool mThunder;
+
+	public int mLevelsCompleted = 0;
 
 	private static GameManager mInstance;
 	public static GameManager Instance
@@ -26,16 +28,10 @@ public class GameManager : MonoBehaviour
 		else 												Destroy(this);
 
 		//Change Global Settings
-		Global.CurrentLevel = LevelType.level;
 		mGameTimer = GetComponentInChildren<CountDownTimer>();
 		mGameTimer.CounterTimerHook += HandleCounterTimerHook;
 		mGameTimer.IsStarted = true;
 		mRaining = mThunder = false;
-	}
-
-	private void Start()
-	{
-		GetComponent<AudioSource>().enabled = Global.Audio;
 	}
 
 	private void Update()
@@ -65,7 +61,7 @@ public class GameManager : MonoBehaviour
 		if(AnimationManager.Instance.ArkClose())
 		{
 			mGameTimer.CounterTimerHook -= HandleCounterTimerHook;
-			//Temp solution
+			mGameTimer.enabled = false;
 			StartCoroutine(Scoring());
 		}
 	}
@@ -74,9 +70,17 @@ public class GameManager : MonoBehaviour
 		Global.Instance.transition.FadeOut();
 		yield return new WaitForSeconds(Global.Instance.transition.mFadeDuration);
 		Global.Instance.transition.FadeIn();
+		AnimationManager.Instance.RemoveTree();
+		PointsManager.Instance.RemoveScoreboard();
+		yield return new WaitForSeconds(Global.Instance.transition.mFadeDuration);
+		Debug.Log("end transit in");
+		// Run the Score
 
-
+		PointsManager.Instance.FinalScore();
+		ButtonsManager.Instance.AttachToRayCast();
+		ButtonsManager.Instance.Active(true);
 	}
+
 	public float GameTime		{	get { return mGameTimer.CurrentTime;	}	}
 	public float GameMaxTime	{	get { return mGameTimer.MaxTime;		}	}
 }

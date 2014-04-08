@@ -30,7 +30,17 @@ public class ButtonsManager : MonoBehaviour
 
 
 	public bool clickable	{	set { mClickable = value;	}	}
-	
+	public void Active(bool _value)
+	{
+		foreach(Transform child in transform)
+		{
+			child.gameObject.SetActive(_value);
+		}
+	}
+	public void AttachToRayCast()
+	{
+		RayCastingManager.Instance.RayCastingHook += HandleRayCastingHook;
+	}
 	public delegate void ButtonHookDelete(Ray _ray);
 	public event ButtonHookDelete ButtonHook;
 
