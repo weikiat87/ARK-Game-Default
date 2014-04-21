@@ -40,6 +40,7 @@ public class ResetButton : Buttons
 					//Do Something when release
 					Global.Score = 0;
 					PlayerPrefs.SetInt("Score",Global.Score);
+					Highscore.Instance.UpdateScore();
 					SoundEffectManager.Instance.PlayEffect("select");
 				}
 			}

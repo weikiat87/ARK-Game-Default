@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿
+using UnityEngine;
 using System.Collections;
 
 public class PointsManager : MonoBehaviour 
@@ -12,6 +13,7 @@ public class PointsManager : MonoBehaviour
 	private PopupText[]	mPopupPoints;
 	private int mCurrentPoints;
 	private int mTallyPoints;
+	private bool mFlag;
 	private int mCounter = 0;
 
 	private static PointsManager mInstance;
@@ -32,8 +34,9 @@ public class PointsManager : MonoBehaviour
 	}
 	private void Start()
 	{
-		mCurrentPoints = 0;
-		mPopupPoints = new PopupText[2];
+		mFlag			 = false;
+		mCurrentPoints	 = 0;
+		mPopupPoints	 = new PopupText[2];
 		mPopupPoints[0] = Instantiate(mPrefPopup) as PopupText;
 		mPopupPoints[1] = Instantiate(mPrefPopup) as PopupText;
 
@@ -55,14 +58,26 @@ public class PointsManager : MonoBehaviour
 		mPopupPoints[1].transform.position = _pos2;
 		mPopupPoints[0].Active = mPopupPoints[1].Active = true;
 	}
-	public int Points
-	{
-		get { return mCurrentPoints; }
-	}
+	public int Points	{	get { return mCurrentPoints; }	}
+
 	public void FinalScore()
 	{
 		mFinalboard.SetActive(true);
 		mFinalboard.animation.Play();
+
+		mTallyPoints = mCurrentPoints;
+		for(int i=1;i <= GameManager.Instance.mLevelsCompleted;i++)
+		{
+			if(i<5) mCurrentPoints += i * 10;
+			else    mCurrentPoints += 50;
+		}
+		if(mCurrentPoints > Global.Score)
+		{
+			mFlag = true;
+			Global.Score = mCurrentPoints;
+			Global.SetScore(mCurrentPoints);
+		}
+
 	}
 	
 	private void HandleCounterTimerHook ()
@@ -85,7 +100,7 @@ public class PointsManager : MonoBehaviour
 		}
 		else
 		{
-			if(mCurrentPoints > Global.Score) AnimationManager.Instance.PlayHighscore();
+			if(mFlag) AnimationManager.Instance.PlayHighscore();
 			AnimationManager.Instance.PlayRating();
 
 			mTimer.IsStarted = false;
@@ -99,15 +114,6 @@ public class PointsManager : MonoBehaviour
 		mPointsText.color = Color.white;
 		mPointsText.transform.position = new Vector3(0.8642f,1.5322f,-0.2f);
 
-		mTallyPoints = mCurrentPoints;
-
-		for(int i=1;i <= GameManager.Instance.mLevelsCompleted;i++)
-		{
-			if(i<5) mCurrentPoints += i * 10;
-			else    mCurrentPoints += 50;
-		}
-
-		Debug.Log("Total Points = " + mCurrentPoints.ToString());
 		mTimer.CounterTimerHook += HandleCounterTimerHook;
 		mTimer.IsStarted = true;
 	}

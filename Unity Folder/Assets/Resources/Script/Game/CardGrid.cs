@@ -46,7 +46,6 @@ public class CardGrid
 			{
 				m2DGrid[x,y].mPosition = new Vector3(deltaX,startY,0);
 				deltaX+= mGridSpacing;
-				Debug.Log(m2DGrid[x,y].mPosition);
 			}
 			startY-= mGridSpacing;
 		}
@@ -55,8 +54,23 @@ public class CardGrid
 	public void IncreaseCol()	{ mCurrentCol++; }
 	public void IncreaseRow()	{ mCurrentRow++; }
 	public int	CardsOnGrid()	{ return mNumberOfCard; }
-
 	public Card GetCard(int _x, int _y)	{	return m2DGrid[_x,_y].mCard;	}
+
+	public bool ClickableCards
+	{
+		set
+		{
+			for(int y=0;y<mCurrentRow;y++)
+			{
+				for(int x=0;x<mCurrentCol;x++)
+				{
+					if(m2DGrid[x,y].mCard) m2DGrid[x,y].mCard.AttachHook = value;
+				}
+			}
+
+		}
+	}
+
 	public void RemoveCard(Card _card)
 	{
 		for(int y=0;y<mCurrentRow;y++)
@@ -65,7 +79,9 @@ public class CardGrid
 			{
 				if(m2DGrid[x,y].mCard == _card)
 				{
-					m2DGrid[x,y].mCard.Active = false;
+					m2DGrid[x,y].mCard.animation.Stop();
+					m2DGrid[x,y].mCard.animation.PlayQueued("Idle",QueueMode.PlayNow);
+					m2DGrid[x,y].mCard.IsFlipped = m2DGrid[x,y].mCard.Active = false;
 					m2DGrid[x,y].mCard = null;
 					mNumberOfCard--;
 					return;

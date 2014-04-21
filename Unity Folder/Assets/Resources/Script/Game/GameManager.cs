@@ -70,6 +70,7 @@ public class GameManager : MonoBehaviour
 		Global.Instance.transition.FadeOut();
 		yield return new WaitForSeconds(Global.Instance.transition.mFadeDuration);
 		Global.Instance.transition.FadeIn();
+
 		AnimationManager.Instance.RemoveTree();
 		PointsManager.Instance.RemoveScoreboard();
 		yield return new WaitForSeconds(Global.Instance.transition.mFadeDuration);

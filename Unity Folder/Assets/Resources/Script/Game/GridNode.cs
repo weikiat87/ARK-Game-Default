@@ -9,7 +9,6 @@ public class GridNode
 	public int y;												// y pos
 	public Card mCard;											// Card in the Node
 	public Vector3 mPosition;									// position of node
-	public List<GridNode> mNeighbors = new List<GridNode>();	// neighbors
 
 	public GridNode()
 	{

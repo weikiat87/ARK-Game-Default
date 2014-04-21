@@ -34,7 +34,7 @@ public class Card : AnimationSprite
 	}
 	public bool IsFlipped
 	{
-		get {	return mFlipped;		}
+		get {	return mFlipped;	}
 		set 
 		{	
 			mCounter.IsStarted = mFlipped = value;
@@ -58,18 +58,31 @@ public class Card : AnimationSprite
 		set 
 		{ 
 			base.Active = value;
-			if(value)	CardManager.Instance.OpenCardHook 	+= OpenCard;
-			else 		CardManager.Instance.OpenCardHook	-= OpenCard;
+			if(value)	
+			{
+				animation.Stop();
+				animation.Play("Idle");
+			}
 		}
 	}
 
-	private void CompareCards()
+	public bool AttachHook
 	{
+		set
+		{
+			if(value)	CardManager.Instance.OpenCardHook += OpenCard;
+			else 		CardManager.Instance.OpenCardHook -= OpenCard;
+		}
+	}
+
+	private void AddCardToHand()
+	{
+		CardManager.Instance.AddCardToHand(this);
 		CardManager.Instance.CompareCards();
 	}
 		
 	// Timer Function
-	private void CounterTimerEnded()	{	CardManager.Instance.RemoveCard(this);	}
+	private void CounterTimerEnded()	{	CardManager.Instance.RemoveCardOnHand(this);	}
 	// Card Manager Function
 	private void OpenCard(Ray _ray)
 	{

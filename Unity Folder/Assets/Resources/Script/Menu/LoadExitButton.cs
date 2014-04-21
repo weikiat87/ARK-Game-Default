@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class LoadExitButton : Buttons 
@@ -39,7 +39,8 @@ public class LoadExitButton : Buttons
 					
 					//Do Something when release
 					Debug.Log(gameObject.name + " release");
-					Application.Quit();
+					SoundEffectManager.Instance.PlayEffect("select");
+					StartCoroutine(Quit());
 				}
 			}
 			
@@ -49,5 +50,11 @@ public class LoadExitButton : Buttons
 			ButtonsManager.Instance.ButtonHook -= Release;
 		}
 		
+	}
+
+	private IEnumerator Quit()
+	{
+		yield return new WaitForSeconds(1.0f);
+		Application.Quit();
 	}
 }

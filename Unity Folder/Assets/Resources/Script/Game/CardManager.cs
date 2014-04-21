@@ -17,6 +17,7 @@ public class CardManager : MonoBehaviour
 	private List<Card> mOpenedCards = new List<Card>();	// Cards that are opened
 	private CardGrid mGrid;								// The Grid
 	private int mCurrentPairs;							// Current Pairs for Grid
+	private bool mClickable;							// Cards in Grid are clickable
 
 	private static CardManager mInstance;
 	public static CardManager Instance
@@ -60,25 +61,18 @@ public class CardManager : MonoBehaviour
 	{
 		if(mOpenedCards.Count < 2)
 		{
-			if(!mOpenedCards.Contains(_card)) 
-			{
-				mOpenedCards.Add(_card);
-				_card.IsFlipped	= true;
-			}
+			if(!mOpenedCards.Contains(_card)) 	_card.IsFlipped	= true;
 		}
-		else
-		{
-			if(!mOpenedCards.Contains(_card)) 
-			{	
-				mOpenedCards[0].IsFlipped = false;
-				mOpenedCards.RemoveAt(0);
-				_card.IsFlipped = true;
-				mOpenedCards.Add(_card);
-			}
-		}
-
+		mGrid.ClickableCards = mClickable = false;
 	}
-	public void RemoveCard(Card _card)
+
+	public void AddCardToHand(Card _card)
+	{
+		mOpenedCards.Add(_card);
+		mGrid.ClickableCards = mClickable = true;
+	}
+
+	public void RemoveCardOnHand(Card _card)
 	{
 		if(mOpenedCards.Count <= 2)
 		{
@@ -88,6 +82,7 @@ public class CardManager : MonoBehaviour
 				mOpenedCards.Remove(_card);
 			}
 		}
+		if(!mClickable) mGrid.ClickableCards = mClickable = true;
 	}
 
 	public int 	CardPoints()					{	return mPointsPerCard;				}
@@ -110,6 +105,7 @@ public class CardManager : MonoBehaviour
 			mCardHolderList[i].CardType = randomType;
 			mGrid.InsertCard(mCardHolderList[i]);
 		}
+		mGrid.ClickableCards = mClickable = true;
 	}
 	public void CompareCards()
 	{
@@ -117,15 +113,22 @@ public class CardManager : MonoBehaviour
 		{
 			if(mOpenedCards[0].CardType == mOpenedCards[1].CardType && mOpenedCards[0] != mOpenedCards[1])
 			{
-				foreach(Card c in mOpenedCards)
-				{
-					c.IsFlipped = false;
-					RemoveCardOnGrid(c);
-				}
 				AnimationManager.Instance.PlayAnimation(mOpenedCards[0].CardType);
 				PointsManager.Instance.AddPointsWithPopup(mPointsPerCard,mOpenedCards[0].WorldPosition,mOpenedCards[1].WorldPosition);
-				mOpenedCards.Clear();	// Empty Opened Cards
+
+				foreach (Card c in mOpenedCards)
+				{
+					RemoveCardOnGrid(c);
+				}
+				mOpenedCards.Clear();
 				CheckComplete();
+			}
+			if(mOpenedCards.Count == 2)
+			{
+				while(mOpenedCards.Count != 0)
+				{
+					RemoveCardOnHand(mOpenedCards[0]);
+				}
 			}
 		}
 	}
